@@ -72,7 +72,6 @@ export default function Legal({ page }: { page: keyof typeof pages }) {
   return (
     <section className="page-narrow legal">
       <Seo title={p.title} />
-      <p className="eyebrow">Informations</p>
       <h1>{p.title}</h1>
       {p.body}
     </section>

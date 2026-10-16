@@ -28,7 +28,6 @@ export default function Confirmation() {
   return (
     <section className="page-narrow">
       <Seo title="Commande" />
-      <p className="eyebrow">Commande</p>
       {status === 'loading' && <h1 aria-busy="true">Vérification du paiement…</h1>}
       {status === 'paid' && (
         <>

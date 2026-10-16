@@ -69,14 +69,12 @@ export function PrinterIntro({ text, onDone, skip }: Props) {
       const octx = off.getContext('2d')!;
       let size = 200;
       octx.font = `700 ${size}px Archivo, 'Arial Black', sans-serif`;
-      octx.fontStretch = 'expanded';
       const ratio = lw / octx.measureText(text).width;
       size = Math.floor(size * ratio);
       const lh = Math.round(size * 0.74);
       off.width = Math.ceil(lw) + 4;
       off.height = lh + 4;
       octx.font = `700 ${size}px Archivo, 'Arial Black', sans-serif`;
-      octx.fontStretch = 'expanded';
       octx.textBaseline = 'alphabetic';
       octx.fillStyle = '#fff';
       octx.fillText(text, 2, lh + 2);

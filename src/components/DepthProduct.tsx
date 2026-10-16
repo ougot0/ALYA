@@ -90,7 +90,7 @@ export function DepthProduct({
         depthMap,
         mask,
         intensity: depthIntensity,
-        segments: coarse ? 110 : 220,
+        segments: coarse ? 140 : 320,
         light: {
           direction: light?.direction ?? [-0.5, 0.6, 1],
           strength: light?.strength ?? 0.55,

@@ -24,20 +24,20 @@ export function Layout() {
     <>
       <a className="skip" href="#contenu">Aller au contenu</a>
       {DEMO && (
-        <p className="demo-banner">Aperçu de démonstration · visuels provisoires · prix fictifs pour essayer le panier · paiement désactivé</p>
+        <p className="demo-banner">Aperçu : visuels provisoires (rendus 3D), prix fictifs pour essayer le panier, paiement désactivé.</p>
       )}
       <header className="site-header">
         <Link to="/" className="wordmark" aria-label={`${settings.brandName} Impression 3D, accueil`}>
-          {settings.brandName}<span>Impression 3D</span>
+          {settings.brandName}
         </Link>
         <nav className="nav-desktop" aria-label="Navigation principale">
-          <NavLink to="/boutique">Showroom</NavLink>
-          <NavLink to="/personnalisation">Personnalisation</NavLink>
+          <NavLink to="/boutique">Objets</NavLink>
+          <NavLink to="/personnalisation">Sur demande</NavLink>
           <NavLink to="/fabrication">Fabrication</NavLink>
           <NavLink to="/contact">Contact</NavLink>
         </nav>
         <Link to="/panier" className="cart-link" aria-label={`Panier, ${count} article${count > 1 ? 's' : ''}`}>
-          Panier <span className="cart-count">{String(count).padStart(2, '0')}</span>
+          Panier{count > 0 && <span className="cart-count">{count}</span>}
         </Link>
         <button
           ref={menuBtn}
@@ -53,11 +53,11 @@ export function Layout() {
       <div id="menu-mobile" className={`menu-mobile ${open ? 'is-open' : ''}`} hidden={!open}>
         <nav aria-label="Navigation mobile">
           <ol className="menu-mobile__main">
-            <li><Link to="/boutique"><span>01</span>Showroom</Link></li>
-            <li><Link to="/personnalisation"><span>02</span>Personnalisation</Link></li>
-            <li><Link to="/fabrication"><span>03</span>Fabrication</Link></li>
-            <li><Link to="/contact"><span>04</span>Contact</Link></li>
-            <li><Link to="/panier"><span>05</span>Panier ({count})</Link></li>
+            <li><Link to="/boutique">Objets</Link></li>
+            <li><Link to="/personnalisation">Sur demande</Link></li>
+            <li><Link to="/fabrication">Fabrication</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/panier">Panier ({count})</Link></li>
           </ol>
           <p className="eyebrow">Catégories</p>
           <ul className="menu-mobile__cats">
@@ -86,7 +86,7 @@ function Footer() {
     <footer className="site-footer">
       <div className="site-footer__brand">
         <p className="wordmark wordmark--large">{settings.brandName}</p>
-        <p>{settings.tagline}.</p>
+        <p>{settings.tagline}</p>
       </div>
       <nav aria-label="Boutique" className="site-footer__col">
         <p className="eyebrow">Boutique</p>

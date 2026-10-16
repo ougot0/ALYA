@@ -54,9 +54,8 @@ export function Process({ standalone = false }: { standalone?: boolean }) {
         <span className="process__bed" />
       </figure>
       <ol className="process__steps">
-        {STEPS.map((s, i) => (
+        {STEPS.map((s) => (
           <li key={s.t}>
-            <span className="process__num">{String(i + 1).padStart(2, '0')}</span>
             <h3>{s.t}</h3>
             <p>{s.d}</p>
           </li>

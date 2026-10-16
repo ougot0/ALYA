@@ -8,9 +8,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "assets:placeholders": "node scripts/generate-placeholders.mjs",
     "assets:depth": "node scripts/prepare-product.mjs",
-    "build:preview": "tsc -b && VITE_DEMO=1 vite build --base ./ --outDir dist-preview"
+    "build:preview": "tsc -b && VITE_DEMO=1 vite build --base ./ --outDir dist-preview",
+    "assets:render": "node scripts/render-products/render.mjs"
   },
   "dependencies": {
     "gsap": "^3.15.0",
@@ -27,6 +27,7 @@
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.186.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "playwright-core": "^1.64.1",
     "sharp": "^0.35.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.4"

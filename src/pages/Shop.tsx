@@ -55,7 +55,6 @@ export default function Shop() {
     <div className="shop">
       <Seo title={cat?.name ?? 'Boutique'} description={cat?.description ?? `Tous les objets ${settings.brandName}.`} />
       <header className="shop__head">
-        <p className="eyebrow">Boutique</p>
         <h1>{cat?.name ?? 'Tous les objets'}</h1>
         {cat && <p className="shop__lead">{cat.description}</p>}
       </header>
@@ -71,12 +70,12 @@ export default function Shop() {
 
       <div className="shop__tools" role="search">
         <label className="field field--search">
-          <span className="eyebrow">Rechercher</span>
+          <span className="field__label">Rechercher</span>
           <input type="search" value={q} onChange={(e) => set('q', e.target.value || null)} placeholder="Nom, matière…" />
         </label>
         {availOptions.length > 1 && (
           <label className="field">
-            <span className="eyebrow">Disponibilité</span>
+            <span className="field__label">Disponibilité</span>
             <select value={avail ?? ''} onChange={(e) => set('dispo', e.target.value || null)}>
               <option value="">Toutes</option>
               {availOptions.map((a) => <option key={a} value={a}>{availabilityLabel[a]}</option>)}
@@ -85,7 +84,7 @@ export default function Shop() {
         )}
         {colorOptions.length > 0 && (
           <label className="field">
-            <span className="eyebrow">Couleur</span>
+            <span className="field__label">Couleur</span>
             <select value={color ?? ''} onChange={(e) => set('couleur', e.target.value || null)}>
               <option value="">Toutes</option>
               {colorOptions.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -93,7 +92,7 @@ export default function Shop() {
           </label>
         )}
         <label className="field">
-          <span className="eyebrow">Trier</span>
+          <span className="field__label">Trier</span>
           <select value={sort} onChange={(e) => set('tri', e.target.value === 'nouveautes' ? null : e.target.value)}>
             <option value="nouveautes">Nouveautés</option>
             <option value="prix-asc">Prix croissant</option>
@@ -107,10 +106,9 @@ export default function Shop() {
 
       {list.length ? (
         <ol className="index">
-          {list.map((p, i) => (
+          {list.map((p) => (
             <li key={p.slug}>
               <Link to={`/produit/${p.slug}`} className="index__row" viewTransition>
-                <span className="index__num">{String(i + 1).padStart(2, '0')}</span>
                 <span className="index__thumb"><img src={p.images[0]?.src} alt="" loading="lazy" /></span>
                 <span className="index__name">{p.name}</span>
                 <span className="index__cat">{getCategory(p.category)?.name}</span>

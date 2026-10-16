@@ -24,7 +24,6 @@ export default function Contact() {
     <section className="contact">
       <Seo title="Contact" description={`Écrire à ${settings.brandName}.`} />
       <header className="page-intro">
-        <p className="eyebrow">Contact</p>
         <h1>Une question sur un objet, une commande ?</h1>
         {settings.contactEmail && <p>Ou directement : <a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></p>}
       </header>
@@ -34,17 +33,17 @@ export default function Contact() {
         <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={submit} className="form">
           <input type="hidden" name="form-name" value="contact" />
           <p hidden><label>Ne pas remplir <input name="bot-field" /></label></p>
-          <label className="field"><span className="eyebrow">Nom</span><input name="name" required autoComplete="name" /></label>
-          <label className="field"><span className="eyebrow">E-mail</span><input name="email" type="email" required autoComplete="email" /></label>
+          <label className="field"><span className="field__label">Nom</span><input name="name" required autoComplete="name" /></label>
+          <label className="field"><span className="field__label">E-mail</span><input name="email" type="email" required autoComplete="email" /></label>
           <label className="field">
-            <span className="eyebrow">Sujet</span>
+            <span className="field__label">Sujet</span>
             <select name="subject">
               <option>Question sur un produit</option>
               <option>Suivi de commande</option>
               <option>Autre</option>
             </select>
           </label>
-          <label className="field field--full"><span className="eyebrow">Message</span><textarea name="message" rows={6} required /></label>
+          <label className="field field--full"><span className="field__label">Message</span><textarea name="message" rows={6} required /></label>
           <button className="btn btn--solid" disabled={state === 'sending'}>{state === 'sending' ? 'Envoi…' : 'Envoyer'}</button>
           {state === 'error' && <p className="form-error" role="alert">L’envoi a échoué. Réessayez dans un instant.</p>}
         </form>

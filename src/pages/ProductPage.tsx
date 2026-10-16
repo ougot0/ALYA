@@ -81,7 +81,7 @@ export default function ProductPage() {
               parallax={(p.depth?.parallax ?? 1) * 1.2}
               scale={p.depth?.scale}
               animation={{ follow: 'drag', float: 0.6 }}
-              light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.45, spec: 0.16 }}
+              light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.2, spec: 0.16 }}
               bleed={8}
               eager
             />
@@ -120,7 +120,7 @@ export default function ProductPage() {
 
         {needsColor && (
           <fieldset className="swatches">
-            <legend className="eyebrow">Couleur{color ? ` — ${color}` : ''}</legend>
+            <legend>Couleur{color ? ` : ${color}` : ''}</legend>
             {p.colors.map((c) => (
               <label key={c.name} className="swatch" title={c.available ? c.name : `${c.name} (indisponible)`}>
                 <input
@@ -180,10 +180,9 @@ export default function ProductPage() {
         {p.description.split('\n\n').map((para, i) => <p key={i}>{para}</p>)}
         {p.usages.length > 0 && (
           <ol className="product__usages">
-            {p.usages.map((u, i) => (
+            {p.usages.map((u) => (
               <li key={u.title}>
-                <span>{String(i + 1).padStart(2, '0')}</span>
-                <h3>{u.title}</h3>
+                                <h3>{u.title}</h3>
                 <p>{u.text}</p>
               </li>
             ))}

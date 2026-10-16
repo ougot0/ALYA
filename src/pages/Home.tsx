@@ -19,7 +19,7 @@ export default function Home() {
       <Seo description={`${settings.brandName} Impression 3D — lampes, supports et créations personnalisées imprimées en 3D.`} />
       <Intro />
       <Zones />
-      <Showroom products={allProducts} heading="Showroom" />
+      <Showroom products={allProducts} heading="Les objets" />
       <Customization />
     </>
   );
@@ -56,10 +56,10 @@ function Intro() {
         <h1 id="intro-title" className="intro__title">
           {settings.brandName} <span>Impression 3D</span>
         </h1>
-        <p className="intro__lead">Lampes, supports et objets du quotidien, imprimés couche par couche dans notre atelier.</p>
+        <p className="intro__lead">Lampes et supports imprimés en 3D, chacun en trois couleurs. Créations sur demande.</p>
         <div className="intro__cta">
-          <a href="#showroom" className="btn btn--solid">Entrer dans le showroom</a>
-          <a href="#personnalisation" className="link-arrow">Créations personnalisées</a>
+          <a href="#showroom" className="btn btn--solid">Voir les objets</a>
+          <a href="#personnalisation" className="link-arrow">Demander une création</a>
         </div>
       </div>
     </section>
@@ -73,28 +73,27 @@ function Zones() {
   return (
     <section className="zones" aria-labelledby="zones-title">
       <h2 id="zones-title" className="sr-only">Les créations</h2>
-      {MAIN.map((slug, i) => <Zone key={slug} slug={slug} side={i % 2 ? 'right' : 'left'} index={i} />)}
+      {MAIN.map((slug, i) => <Zone key={slug} slug={slug} side={i % 2 ? 'right' : 'left'} />)}
       <nav className="zones__more" aria-label="Autres créations">
-        <p className="eyebrow">Également à l’atelier</p>
         <ul>
           {secondary.map((c) => {
             const n = productsIn(c.slug).length;
             return (
               <li key={c.slug}>
                 <Link to={`/boutique/${c.slug}`}>
-                  {c.name} <span>{n ? `${n} objet${n > 1 ? 's' : ''}` : 'Bientôt'}</span>
+                  {c.name} <span>{n ? `${n} objet${n > 1 ? 's' : ''}` : 'bientôt'}</span>
                 </Link>
               </li>
             );
           })}
-          <li><a href="#personnalisation">Créations personnalisées <span>Sur demande</span></a></li>
+          <li><a href="#personnalisation">Créations personnalisées <span>sur demande</span></a></li>
         </ul>
       </nav>
     </section>
   );
 }
 
-function Zone({ slug, side, index }: { slug: string; side: 'left' | 'right'; index: number }) {
+function Zone({ slug, side }: { slug: string; side: 'left' | 'right' }) {
   const cat = getCategory(slug);
   const p = productsIn(slug).find((x) => x.featured) ?? productsIn(slug)[0];
   const root = useRef<HTMLElement>(null);
@@ -108,7 +107,6 @@ function Zone({ slug, side, index }: { slug: string; side: 'left' | 'right'; ind
     const ctx = gsap.context(() => {
       gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'bottom 20%', scrub: 0.6 } })
         .fromTo(m, { push: -0.5, x: side === 'left' ? 0.5 : -0.5 }, { push: 0.75, x: side === 'left' ? -0.4 : 0.4, ease: 'none' }, 0)
-        .fromTo('.zone__name', { xPercent: side === 'left' ? -6 : 6 }, { xPercent: side === 'left' ? 4 : -4, ease: 'none' }, 0)
         .fromTo('.zone__frame', { scale: 0.94 }, { scale: 1.02, ease: 'none' }, 0);
     }, root);
     return () => ctx.revert();
@@ -116,14 +114,11 @@ function Zone({ slug, side, index }: { slug: string; side: 'left' | 'right'; ind
 
   if (!cat) return null;
   const img = p ? imagesFor(p, p.colors[0]?.name ?? null)[0] : undefined;
-  const glow = p?.light && p.colors[0] ? p.light[p.colors[0].name] : undefined;
 
   return (
     <article className={`zone zone--${side}`} ref={root}>
-      <p className="zone__name" aria-hidden="true">{cat.name}</p>
       <div className="zone__frame" aria-hidden="true" />
       <div className="zone__object">
-        {glow && <span className="showroom__lamp" style={{ ['--lamp' as string]: glow }} aria-hidden="true" />}
         {img && (
           <DepthProduct
             image={img.src}
@@ -133,15 +128,14 @@ function Zone({ slug, side, index }: { slug: string; side: 'left' | 'right'; ind
             motion={motion}
             bleed={24}
             animation={{ float: 0.8, drift: side === 'left' ? 0.12 : -0.12 }}
-            light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.45, spec: 0.14 }}
+            light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.2, spec: 0.14 }}
           />
         )}
       </div>
       <div className="zone__text">
-        <p className="eyebrow">{String(index + 1).padStart(2, '0')} — {cat.name}</p>
         <h3 className="zone__title">{cat.name}</h3>
         <p>{cat.description}</p>
-        <Link to={`/boutique/${cat.slug}`} className="link-arrow">Explorer les {cat.name.toLowerCase()}</Link>
+        <Link to={`/boutique/${cat.slug}`} className="link-arrow">Voir les {cat.name.toLowerCase()}</Link>
       </div>
     </article>
   );

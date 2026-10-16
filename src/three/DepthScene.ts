@@ -1,4 +1,5 @@
 import {
+  DoubleSide,
   Mesh,
   PerspectiveCamera,
   PlaneGeometry,
@@ -11,6 +12,7 @@ import {
   Vector3,
   WebGLRenderer,
   LinearFilter,
+  LinearMipmapLinearFilter,
 } from 'three';
 
 /**
@@ -29,13 +31,15 @@ const vertex = /* glsl */ `
   void main() {
     vUv = uv;
     // relief atténué près de la silhouette : évite d'étirer les contours
-    vec2 o = uTexel * 10.0;
+    vec2 o = uTexel * 16.0;
     float edge = min(min(texture2D(uMap, uv + vec2(o.x, 0.0)).a, texture2D(uMap, uv - vec2(o.x, 0.0)).a),
                      min(texture2D(uMap, uv + vec2(0.0, o.y)).a, texture2D(uMap, uv - vec2(0.0, o.y)).a));
     float d = texture2D(uDepth, uv).r * smoothstep(0.0, 1.0, edge);
     vDepth = d;
     vec3 p = position;
-    p.z += d * uIntensity;
+    // géométrie à peine déformée : la perspective globale vient du maillage,
+    // le relief interne vient du décalage par pixel (fragment), qui garde des contours nets
+    p.z += d * uIntensity * 0.3;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
   }
 `;
@@ -53,16 +57,21 @@ const fragment = /* glsl */ `
   uniform vec3 uRimColor;
   uniform float uRim;
   uniform float uSpec;
+  uniform vec2 uTilt;
   varying vec2 vUv;
   varying float vDepth;
   void main() {
-    vec4 c = texture2D(uMap, vUv);
+    // décalage par pixel guidé par la profondeur (2 itérations) :
+    // les parties proches glissent plus que les parties lointaines
+    vec2 uv = vUv + uTilt * (texture2D(uDepth, vUv).r - 0.4);
+    uv = vUv + uTilt * (texture2D(uDepth, uv).r - 0.4);
+    vec4 c = texture2D(uMap, uv);
     float a = c.a;
-    if (uHasMask > 0.5) a *= texture2D(uMask, vUv).r;
-    if (a < 0.02) discard;
+    if (uHasMask > 0.5) a *= texture2D(uMask, uv).r;
+    if (a < 0.01) discard;
     // normale estimée à partir du gradient de profondeur
-    float dx = texture2D(uDepth, vUv + vec2(uTexel.x, 0.0)).r - texture2D(uDepth, vUv - vec2(uTexel.x, 0.0)).r;
-    float dy = texture2D(uDepth, vUv + vec2(0.0, uTexel.y)).r - texture2D(uDepth, vUv - vec2(0.0, uTexel.y)).r;
+    float dx = texture2D(uDepth, uv + vec2(uTexel.x, 0.0)).r - texture2D(uDepth, uv - vec2(uTexel.x, 0.0)).r;
+    float dy = texture2D(uDepth, uv + vec2(0.0, uTexel.y)).r - texture2D(uDepth, uv - vec2(0.0, uTexel.y)).r;
     vec3 n = normalize(vec3(-dx * 6.0, -dy * 6.0, 1.0));
     float diff = max(dot(n, normalize(uLightDir)), 0.0);
     float shade = mix(1.0, uAmbient + diff * (1.0 - uAmbient) * 1.15, uLight);
@@ -129,7 +138,10 @@ export class DepthScene {
     const { image, depthMap, mask } = this.opts;
     const [map, depth, maskTex] = await Promise.all([load(image), load(depthMap), mask ? load(mask) : Promise.resolve(null)]);
     map.colorSpace = SRGBColorSpace;
-    for (const t of [map, depth, maskTex]) if (t) { t.minFilter = LinearFilter; t.generateMipmaps = false; }
+    // photo et masque : mipmaps, sinon la silhouette crénèle quand l'image est réduite à l'écran
+    for (const t of [map, maskTex]) if (t) { t.minFilter = LinearMipmapLinearFilter; t.generateMipmaps = true; t.anisotropy = 4; }
+    depth.minFilter = LinearFilter;
+    depth.generateMipmaps = false;
     const img = map.image as HTMLImageElement;
     this.aspect = img.width / img.height;
     const s = this.opts.segments;
@@ -139,6 +151,7 @@ export class DepthScene {
       vertexShader: vertex,
       fragmentShader: fragment,
       transparent: true,
+      side: DoubleSide,
       uniforms: {
         uMap: { value: map },
         uDepth: { value: depth },
@@ -153,6 +166,7 @@ export class DepthScene {
         uRimColor: { value: new Vector3(...(this.opts.light.rim ?? [0.48, 0.36, 1])) },
         uRim: { value: this.opts.light.rimStrength ?? 0.35 },
         uSpec: { value: this.opts.light.spec ?? 0.12 },
+        uTilt: { value: new Vector2() },
       },
     });
     this.mesh = new Mesh(geo, mat);
@@ -215,6 +229,8 @@ export class DepthScene {
       this.opts.light.direction[2],
     );
     u.uIntensity.value = this.opts.intensity * (1 + c.z * 0.45);
+    // amplitude du décalage limitée : une photo ne montre pas les faces cachées
+    (u.uTilt.value as Vector2).set(-c.x, c.y).multiplyScalar(this.opts.intensity * 0.05);
     this.renderer.render(this.scene, this.camera);
   }
 

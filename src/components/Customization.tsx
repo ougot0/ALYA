@@ -52,13 +52,12 @@ export function Customization({ standalone = false }: { standalone?: boolean }) 
   return (
     <section className="custom" id="personnalisation" aria-labelledby="custom-title">
       <div className="custom__intro">
-        <p className="eyebrow">Créations personnalisées</p>
-        <Title id="custom-title" className="custom__title">Un objet imprimé pour vous.</Title>
-        <p>Choisissez un type de création, décrivez votre idée : nous revenons vers vous avec une proposition et un devis.</p>
+        <Title id="custom-title" className="custom__title">Créations personnalisées</Title>
+        <p>Choisissez un type, décrivez ce que vous voulez. Nous répondons par e-mail avec une proposition et un prix.</p>
       </div>
 
       <div className="custom__types" role="radiogroup" aria-label="Type de création">
-        {CUSTOM_TYPES.map((t, i) => (
+        {CUSTOM_TYPES.map((t) => (
           <button
             key={t.key}
             role="radio"
@@ -66,7 +65,6 @@ export function Customization({ standalone = false }: { standalone?: boolean }) 
             className="custom__type"
             onClick={() => setType(t.key)}
           >
-            <span className="custom__num">{String(i + 1).padStart(2, '0')}</span>
             <span className="custom__name">{t.name}</span>
           </button>
         ))}
@@ -84,19 +82,19 @@ export function Customization({ standalone = false }: { standalone?: boolean }) 
             <input type="hidden" name="type" value={current.name} />
             <p hidden><label>Ne pas remplir <input name="bot-field" /></label></p>
             <label className="field field--full">
-              <span className="eyebrow">Votre idée</span>
+              <span className="field__label">Votre demande</span>
               <textarea id="custom-message" name="message" rows={4} required placeholder={current.ask} />
             </label>
             <label className="field">
-              <span className="eyebrow">E-mail</span>
+              <span className="field__label">E-mail</span>
               <input id="custom-email" name="email" type="email" required autoComplete="email" />
             </label>
             <label className="field">
-              <span className="eyebrow">Image de référence (facultatif)</span>
+              <span className="field__label">Image de référence (facultatif)</span>
               <input id="custom-file" name="reference" type="file" accept="image/*,.pdf,.stl" />
             </label>
             <button className="btn btn--solid" disabled={state === 'sending'}>
-              {state === 'sending' ? 'Envoi…' : `Envoyer ma demande · ${current.name}`}
+              {state === 'sending' ? 'Envoi…' : 'Envoyer la demande'}
             </button>
             {state === 'error' && <p className="form-error" role="alert">L’envoi a échoué. Réessayez dans un instant.</p>}
           </form>

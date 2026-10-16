@@ -36,7 +36,6 @@ export function ProductCard({ product: p, index, variant = 'grid' }: Props) {
           )}
         </div>
         <div className="pcard__meta">
-          <span className="pcard__num">{String(index + 1).padStart(2, '0')}</span>
           <h3 className="pcard__name">{p.name}</h3>
           <p className="pcard__cat">{getCategory(p.category)?.name}</p>
           {variant !== 'grid' && <p className="pcard__desc">{p.shortDescription}</p>}

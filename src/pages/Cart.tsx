@@ -36,7 +36,6 @@ export default function Cart() {
     <section className="cart">
       <Seo title="Panier" />
       <header className="shop__head">
-        <p className="eyebrow">Panier</p>
         <h1>{count ? `${count} article${count > 1 ? 's' : ''}` : 'Votre panier est vide'}</h1>
       </header>
 

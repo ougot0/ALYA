@@ -77,9 +77,9 @@ WebGL ou la carte de profondeur manquent. Sur le catalogue, un seul contexte Web
 
 ## Direction artistique : l’atelier orbital
 
-Bleu marine presque noir et surfaces bleu sombre en profondeur. Le violet n’est jamais une couleur d’interface :
-c’est une lumière d’ambiance posée sur le bord des sections, comme une installation hors champ. Les couleurs vives
-sont réservées aux produits. Typographie : Archivo en chasse étendue (titres), Hanken Grotesk (texte), IBM Plex Mono (repères).
+Bleu marine presque noir et surfaces bleu sombre en profondeur. Le violet n’existe que comme lumière physique sur les objets
+(contre-jour dans les rendus et le shader), jamais comme décor d’interface. Les couleurs vives sont réservées aux produits.
+Typographie : Archivo (titres, casse normale), Hanken Grotesk (texte). Pas de libellés en capitales, pas de numérotation décorative.
 
 Parcours de la page d’accueil :
 1. **Introduction** (`src/components/PrinterIntro.tsx`) : une imprimante 3D (canvas 2D) imprime le logo couche par couche.
@@ -99,9 +99,14 @@ Note : le code de la version précédente du site n’était pas disponible ; ce
 
 ## Visuels provisoires
 
-`npm run assets:placeholders` génère des illustrations (lampe en 3 couleurs, support en 3 couleurs) et une carte de profondeur
-par forme. Ce sont des placeholders techniques. Pour une vraie photo : `npm run assets:depth -- photo.jpg lampe-onde-ambre`,
-puis référencer le fichier dans `images` du produit avec `"color": "Ambre"`.
+`npm run assets:render` modélise la lampe et le support en 3D (Three.js, rendu dans Chromium via playwright-core) :
+matière PLA avec lignes de couche, éclairage physique, ombre de contact, contre-jour violet discret.
+Chaque couleur a son rendu ; la carte de profondeur est exacte (issue du rendu) et retombe à zéro près des contours.
+Ce sont des visuels provisoires, pas des photographies. Pour une vraie photo :
+`npm run assets:depth -- photo.jpg lampe-onde-ambre`, puis la référencer dans `images` du produit avec `"color": "Ambre"`.
+
+Rendu 2.5D (`src/three/DepthScene.ts`) : maillage très légèrement déformé pour la perspective, plus un décalage par pixel
+guidé par la profondeur pour le relief interne. Les contours restent nets quand l'objet pivote. Angles volontairement limités.
 
 ## Arborescence
 

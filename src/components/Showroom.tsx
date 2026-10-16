@@ -38,7 +38,6 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
   const p = products[index % Math.max(1, products.length)];
   const color = p ? colors[p.slug] ?? p.colors.find((c) => c.available)?.name ?? null : null;
   const img = p ? imagesFor(p, color)[0] : undefined;
-  const glow = p?.light && color ? p.light[color] : undefined;
 
   useEffect(() => { setOpen(false); setQty(1); setAdded(false); }, [index]);
 
@@ -101,7 +100,6 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
   if (!p) return null;
   const buyable = isPurchasable(p);
   const cat = getCategory(p.category);
-  const num = (n: number) => String(n).padStart(2, '0');
 
   const add = () => {
     dispatch({ type: 'add', slug: p.slug, color, qty });
@@ -112,14 +110,13 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
   return (
     <section className="showroom" id={id} aria-roledescription="carrousel" aria-label={heading} onKeyDown={onKey}>
       <div className="showroom__head">
-        <p className="eyebrow">{heading}</p>
+        <h2 className="showroom__heading">{heading}</h2>
         <p className="showroom__count" aria-live="polite">
-          <span>{num(index + 1)}</span> / {num(products.length)}
+          {index + 1} sur {products.length}
         </p>
       </div>
 
       <div className="showroom__stage">
-        <p className="showroom__ghost" aria-hidden="true">{p.name.split(' ')[0]}</p>
         <div
           className="showroom__space"
           onPointerDown={onDown}
@@ -129,8 +126,6 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
           onPointerLeave={onUp}
         >
           <div className="showroom__object" ref={objRef}>
-            {glow && <span className="showroom__lamp" style={{ ['--lamp' as string]: glow }} aria-hidden="true" />}
-            <span className="showroom__floor" aria-hidden="true" />
             {img && (
               <DepthProduct
                 key={img.src}
@@ -143,7 +138,7 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
                 scale={p.depth?.scale}
                 motion={motion}
                 animation={{ float: 1, follow: 'none' }}
-                light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.45, spec: 0.16 }}
+                light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.2, spec: 0.16 }}
                 bleed={16}
                 eager
               />
@@ -160,17 +155,17 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
             </button>
           </>
         )}
-        <p className="showroom__hint" aria-hidden="true">Glisser pour orienter l’objet</p>
+        <p className="showroom__hint" aria-hidden="true">Faites glisser pour tourner l’objet</p>
       </div>
 
       <div className="showroom__info" ref={infoRef}>
-        <p className="eyebrow">{cat?.name}</p>
-        <h2 className="showroom__name">{p.name}</h2>
+        <p className="showroom__cat">{cat?.name}</p>
+        <h3 className="showroom__name">{p.name}</h3>
         <p className="showroom__short">{p.shortDescription}</p>
 
         {p.colors.length > 0 && (
           <fieldset className="swatches">
-            <legend className="eyebrow">Couleur — {color}</legend>
+            <legend>Couleur : {color}</legend>
             {p.colors.map((c) => (
               <label key={c.name} className="swatch" title={c.available ? c.name : `${c.name} (indisponible)`}>
                 <input
@@ -208,7 +203,7 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
         </div>
 
         <button className="showroom__toggle" aria-expanded={open} aria-controls={`${id}-details`} onClick={() => setOpen((o) => !o)}>
-          {open ? 'Masquer les caractéristiques' : 'Caractéristiques'}
+          {open ? 'Masquer le détail' : 'Détail et dimensions'}
           <span aria-hidden="true">{open ? '−' : '+'}</span>
         </button>
         <div id={`${id}-details`} className={`showroom__details ${open ? 'is-open' : ''}`} hidden={!open}>

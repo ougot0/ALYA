@@ -55,10 +55,14 @@ const depthBuf = await sharp(Buffer.from(depth.data), { raw: { width: depth.widt
 console.log('3/3 optimisation…');
 // Profondeur multipliée par le masque : le fond retombe à 0, les contours sont adoucis
 // pour limiter l'étirement des sommets en bordure.
-const softMask = await sharp(alpha, { raw: { width, height, channels: 1 } }).blur(3).raw().toBuffer();
+// érosion douce du masque : le relief retombe à zéro avant la silhouette (pas de crénelage au pivot)
+const softMask = await sharp(alpha, { raw: { width, height, channels: 1 } }).blur(14).raw().toBuffer();
 const d = await sharp(depthBuf).raw().toBuffer();
 const masked = Buffer.alloc(d.length);
-for (let i = 0; i < d.length; i++) masked[i] = Math.round((d[i] * softMask[i]) / 255);
+for (let i = 0; i < d.length; i++) {
+  const t = Math.min(1, Math.max(0, (softMask[i] / 255 - 0.6) / 0.38));
+  masked[i] = Math.round(d[i] * t * t * (3 - 2 * t));
+}
 
 const rgb = await sharp(src).removeAlpha().raw().toBuffer();
 await sharp(rgb, { raw: { width, height, channels: 3 } })
