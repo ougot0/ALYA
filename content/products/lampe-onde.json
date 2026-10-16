@@ -1,0 +1,23 @@
+{
+  "slug": "lampe-onde",
+  "name": "Lampe Onde",
+  "category": "lampes",
+  "shortDescription": "Lampe à poser dont l’abat-jour est imprimé couche par couche.",
+  "description": "L’abat-jour de la lampe Onde est construit par l’empilement de fines couches de filament. Ces lignes, visibles de près, accrochent la lumière et donnent à la surface une texture régulière. Allumée, la lampe diffuse une lumière chaude à travers la matière.\n\nVisuels provisoires : les photographies définitives remplaceront ces illustrations.",
+  "price": null,
+  "createdAt": "2026-10-01",
+  "availability": "coming_soon",
+  "stock": null,
+  "hidden": false,
+  "featured": true,
+  "colors": [],
+  "dimensions": "",
+  "materials": "",
+  "usages": [],
+  "images": [
+    { "src": "/products/lampe-onde-1.webp", "depth": "/products/lampe-onde-1-depth.webp", "alt": "Lampe Onde éteinte, abat-jour strié couleur sable sur pied anthracite" },
+    { "src": "/products/lampe-onde-2.webp", "depth": "/products/lampe-onde-2-depth.webp", "alt": "Lampe Onde allumée, lumière chaude sous l’abat-jour" }
+  ],
+  "depth": { "intensity": 0.32, "parallax": 1, "scale": 1 },
+  "related": ["support-trame"]
+}

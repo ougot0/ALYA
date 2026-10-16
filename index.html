@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#efe9df" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <title>ALYA — Objets imprimés en 3D</title>
+    <meta name="description" content="Lampes, supports et objets imprimés en 3D, dessinés comme des objets de design." />
+    <meta property="og:type" content="website" />
+    <script>
+      // Liens d'invitation / de réinitialisation Netlify Identity -> espace d'administration
+      if (/(invite|recovery|confirmation)_token=/.test(location.hash)) location.replace('/admin/' + location.hash);
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Déclaration statique du formulaire pour la détection Netlify Forms -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input name="name" /><input name="email" /><select name="subject"><option>x</option></select><textarea name="message"></textarea><input name="bot-field" />
+    </form>
+    <noscript>Ce site nécessite JavaScript pour la boutique.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

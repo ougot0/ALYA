@@ -1,0 +1,89 @@
+# Administration Decap CMS : édite les fichiers /content du dépôt GitHub.
+# Accès protégé par Netlify Identity (invitation uniquement) + Git Gateway.
+backend:
+  name: git-gateway
+  branch: main
+locale: fr
+media_folder: public/products
+public_folder: /products
+
+collections:
+  - name: products
+    label: Produits
+    label_singular: Produit
+    folder: content/products
+    extension: json
+    format: json
+    create: true
+    identifier_field: slug
+    slug: "{{fields.slug}}"
+    fields:
+      - { name: slug, label: "Identifiant d'URL", widget: string, pattern: ['^[a-z0-9-]+$', 'minuscules, chiffres et tirets'] }
+      - { name: name, label: Nom, widget: string }
+      - { name: category, label: Catégorie, widget: select, options: [lampes, supports, decoratifs, bureau] }
+      - { name: shortDescription, label: Description courte, widget: text }
+      - { name: description, label: Description détaillée, widget: text }
+      - { name: price, label: "Prix en centimes (ex. 4900 = 49,00 €) — vide = non achetable", widget: number, value_type: int, required: false }
+      - { name: createdAt, label: Date d'ajout, widget: datetime, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { name: availability, label: Disponibilité, widget: select, options: [{label: Disponible, value: in_stock}, {label: Dernières pièces, value: low_stock}, {label: Imprimé à la commande, value: made_to_order}, {label: Épuisé, value: out_of_stock}, {label: Bientôt disponible, value: coming_soon}] }
+      - { name: stock, label: "Stock (vide = non suivi)", widget: number, value_type: int, required: false }
+      - { name: hidden, label: Masquer le produit, widget: boolean, default: false }
+      - { name: featured, label: Mettre en avant, widget: boolean, default: false }
+      - name: colors
+        label: Couleurs
+        widget: list
+        required: false
+        fields:
+          - { name: name, label: Nom, widget: string }
+          - { name: hex, label: Couleur, widget: color }
+          - { name: available, label: Disponible, widget: boolean, default: true }
+      - { name: dimensions, label: Dimensions, widget: string, required: false }
+      - { name: materials, label: Matériaux, widget: string, required: false }
+      - name: usages
+        label: Usages (mise en scène)
+        widget: list
+        required: false
+        fields:
+          - { name: title, label: Titre, widget: string }
+          - { name: text, label: Texte, widget: string }
+          - { name: x, label: "Repère X (0-1)", widget: number, value_type: float }
+          - { name: y, label: "Repère Y (0-1)", widget: number, value_type: float }
+      - name: images
+        label: Photos
+        widget: list
+        fields:
+          - { name: src, label: "Photo détourée (WebP/PNG transparent)", widget: image }
+          - { name: depth, label: "Carte de profondeur (npm run assets:depth)", widget: image, required: false }
+          - { name: mask, label: "Masque (optionnel)", widget: image, required: false }
+          - { name: alt, label: Texte alternatif, widget: string }
+      - name: depth
+        label: Réglages du relief
+        widget: object
+        required: false
+        fields:
+          - { name: intensity, label: "Intensité (0.15–0.45)", widget: number, value_type: float, default: 0.3 }
+          - { name: parallax, label: "Parallaxe (0–1.5)", widget: number, value_type: float, default: 1 }
+          - { name: scale, label: Échelle, widget: number, value_type: float, default: 1 }
+      - { name: related, label: "Produits associés (identifiants)", widget: list, required: false }
+
+  - name: settings
+    label: Réglages
+    files:
+      - name: settings
+        label: Boutique
+        file: content/settings.json
+        fields:
+          - { name: brandName, label: Nom de la marque, widget: string }
+          - { name: tagline, label: Signature, widget: string }
+          - { name: currency, label: Devise, widget: hidden, default: EUR }
+          - { name: contactEmail, label: E-mail de contact, widget: string, required: false }
+          - { name: instagram, label: Lien Instagram, widget: string, required: false }
+          - { name: shippingInfo, label: Informations de livraison, widget: text, required: false }
+          - { name: returnsInfo, label: Retours, widget: text, required: false }
+          - name: categories
+            label: Catégories
+            widget: list
+            fields:
+              - { name: slug, label: Identifiant, widget: string }
+              - { name: name, label: Nom, widget: string }
+              - { name: description, label: Description, widget: text }

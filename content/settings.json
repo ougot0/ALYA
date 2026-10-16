@@ -1,0 +1,15 @@
+{
+  "brandName": "ALYA",
+  "tagline": "Objets imprimés en 3D",
+  "currency": "EUR",
+  "contactEmail": "",
+  "instagram": "",
+  "shippingInfo": "",
+  "returnsInfo": "",
+  "categories": [
+    { "slug": "lampes", "name": "Lampes", "description": "Luminaires imprimés, diffusion douce à travers les couches de matière." },
+    { "slug": "supports", "name": "Supports", "description": "Pour ranger téléphone, écouteurs, câbles et petits objets du quotidien." },
+    { "slug": "decoratifs", "name": "Objets décoratifs", "description": "Figurines et pièces de décoration." },
+    { "slug": "bureau", "name": "Bureau", "description": "Accessoires pour organiser l’espace de travail." }
+  ]
+}

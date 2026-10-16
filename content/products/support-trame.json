@@ -1,0 +1,27 @@
+{
+  "slug": "support-trame",
+  "name": "Support Trame",
+  "category": "supports",
+  "shortDescription": "Un support multifonction : téléphone, écouteurs, câbles et petits accessoires au même endroit.",
+  "description": "Trame rassemble sur une même base ce qui traîne habituellement sur un bureau ou une table de chevet. Le dossier incliné accueille un téléphone, le bras vertical reçoit un casque ou des écouteurs, les encoches guident les câbles et le vide-poche garde clés, bagues ou clés USB.\n\nVisuels provisoires : les photographies définitives remplaceront ces illustrations.",
+  "price": null,
+  "createdAt": "2026-10-05",
+  "availability": "coming_soon",
+  "stock": null,
+  "hidden": false,
+  "featured": true,
+  "colors": [],
+  "dimensions": "",
+  "materials": "",
+  "usages": [
+    { "title": "Téléphone", "text": "Posé sur le dossier incliné, l’écran reste lisible.", "x": 0.42, "y": 0.45 },
+    { "title": "Écouteurs et casque", "text": "Le bras vertical les garde à portée de main.", "x": 0.78, "y": 0.24 },
+    { "title": "Câbles", "text": "Les encoches maintiennent les câbles en place.", "x": 0.3, "y": 0.75 },
+    { "title": "Petits accessoires", "text": "Le vide-poche reçoit clés, bagues ou clés USB.", "x": 0.7, "y": 0.76 }
+  ],
+  "images": [
+    { "src": "/products/support-trame-1.webp", "depth": "/products/support-trame-1-depth.webp", "alt": "Support Trame anthracite avec dossier pour téléphone, bras pour casque et encoches à câbles" }
+  ],
+  "depth": { "intensity": 0.26, "parallax": 0.8, "scale": 1 },
+  "related": ["lampe-onde"]
+}
