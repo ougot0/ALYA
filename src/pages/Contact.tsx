@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Seo } from '../components/Seo';
-import { settings } from '../data/catalog';
+import { DEMO, settings } from '../data/catalog';
 
 /** Formulaire traité par Netlify Forms (aucun backend à maintenir). */
 export default function Contact() {
@@ -9,6 +9,7 @@ export default function Contact() {
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setState('sending');
+    if (DEMO) { setState('sent'); return; }
     const body = new URLSearchParams(new FormData(e.currentTarget) as unknown as Record<string, string>).toString();
     try {
       const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
@@ -28,7 +29,7 @@ export default function Contact() {
         {settings.contactEmail && <p>Ou directement : <a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></p>}
       </header>
       {state === 'sent' ? (
-        <p className="contact__done" role="status">Message envoyé. Nous vous répondrons par e-mail.</p>
+        <p className="contact__done" role="status">{DEMO ? 'Aperçu : rien n’a été envoyé. Sur le site déployé, le message arrive dans Netlify Forms.' : 'Message envoyé. Nous vous répondrons par e-mail.'}</p>
       ) : (
         <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={submit} className="form">
           <input type="hidden" name="form-name" value="contact" />

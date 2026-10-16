@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ReactNode } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, createMemoryRouter } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import Home from './pages/Home';
 
@@ -14,7 +14,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 const s = (el: ReactNode) => <Suspense fallback={<div className="page-loading" aria-busy="true" />}>{el}</Suspense>;
 
-export const router = createBrowserRouter([
+const routes = [
   {
     element: <Layout />,
     children: [
@@ -33,4 +33,7 @@ export const router = createBrowserRouter([
       { path: '*', element: s(<NotFound />) },
     ],
   },
-]);
+];
+
+// L'aperçu tourne dans un cadre isolé : routage en mémoire, sans dépendre de l'URL.
+export const router = import.meta.env.VITE_DEMO === '1' ? createMemoryRouter(routes) : createBrowserRouter(routes);

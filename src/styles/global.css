@@ -499,3 +499,6 @@ main:focus { outline: none; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
   ::view-transition-group(*) { animation: none; }
 }
+
+/* ---------- Bandeau d'aperçu (build:preview uniquement) ---------- */
+.demo-banner { margin: 0; padding: 8px var(--gutter); background: var(--clay); color: var(--paper); font: 500 11px/1.5 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; }

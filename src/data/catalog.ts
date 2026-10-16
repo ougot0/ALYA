@@ -6,8 +6,19 @@ const modules = import.meta.glob<Product>('../../content/products/*.json', { eag
 
 export const settings = settingsJson as Settings;
 
+/** Mode aperçu (npm run build:preview) : chemins relatifs et prix de démonstration signalés à l'écran. */
+export const DEMO = import.meta.env.VITE_DEMO === '1';
+const DEMO_PRICES: Record<string, number> = { 'lampe-onde': 8900, 'support-trame': 3400 };
+const rel = (u?: string) => (u && import.meta.env.BASE_URL !== '/' ? import.meta.env.BASE_URL + u.replace(/^\//, '') : u);
+const prepare = (p: Product): Product => {
+  const images = p.images.map((i) => ({ ...i, src: rel(i.src)!, depth: rel(i.depth), mask: rel(i.mask) }));
+  if (!DEMO || p.price !== null) return { ...p, images };
+  return { ...p, images, price: DEMO_PRICES[p.slug] ?? 4500, availability: 'made_to_order' };
+};
+
 export const allProducts: Product[] = Object.values(modules)
   .filter((p) => !p.hidden)
+  .map(prepare)
   .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
 export const getProduct = (slug: string) => allProducts.find((p) => p.slug === slug);

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
-import { settings, productsIn } from '../data/catalog';
+import { DEMO, settings, productsIn } from '../data/catalog';
 import { useCart } from '../lib/cart';
 
 export function Layout() {
@@ -23,6 +23,9 @@ export function Layout() {
   return (
     <>
       <a className="skip" href="#contenu">Aller au contenu</a>
+      {DEMO && (
+        <p className="demo-banner">Aperçu de démonstration · visuels provisoires · prix fictifs pour essayer le panier · paiement désactivé</p>
+      )}
       <header className="site-header">
         <Link to="/" className="wordmark" aria-label={`${settings.brandName}, accueil`}>
           {settings.brandName}

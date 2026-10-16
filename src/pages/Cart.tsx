@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Seo } from '../components/Seo';
-import { formatPrice, getProduct, settings } from '../data/catalog';
+import { DEMO, formatPrice, getProduct, settings } from '../data/catalog';
 import { useCart } from '../lib/cart';
 
 export default function Cart() {
@@ -12,6 +12,11 @@ export default function Cart() {
   const checkout = async () => {
     setState('loading');
     setError('');
+    if (DEMO) {
+      setState('error');
+      setError('Aperçu : le paiement Stripe est désactivé. Sur le site déployé, ce bouton ouvre la page de paiement sécurisée.');
+      return;
+    }
     try {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
