@@ -14,7 +14,7 @@ export interface DepthProductProps {
   scale?: number;
   /** Décalage dans la scène, en fractions de hauteur */
   position?: [number, number];
-  light?: { direction?: [number, number, number]; strength?: number; ambient?: number };
+  light?: { direction?: [number, number, number]; strength?: number; ambient?: number; rim?: [number, number, number]; rimStrength?: number; spec?: number };
   animation?: {
     /** Flottement léger permanent (0 = aucun) */
     float?: number;
@@ -95,6 +95,9 @@ export function DepthProduct({
           direction: light?.direction ?? [-0.5, 0.6, 1],
           strength: light?.strength ?? 0.55,
           ambient: light?.ambient ?? 0.72,
+          rim: light?.rim,
+          rimStrength: light?.rimStrength,
+          spec: light?.spec,
         },
       });
       try {

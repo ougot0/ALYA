@@ -11,6 +11,7 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Legal = lazy(() => import('./pages/Legal'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Custom = lazy(() => import('./pages/Custom'));
 
 const s = (el: ReactNode) => <Suspense fallback={<div className="page-loading" aria-busy="true" />}>{el}</Suspense>;
 
@@ -25,6 +26,7 @@ const routes = [
       { path: '/panier', element: s(<Cart />) },
       { path: '/commande/confirmation', element: s(<Confirmation />) },
       { path: '/fabrication', element: s(<About />) },
+      { path: '/personnalisation', element: s(<Custom />) },
       { path: '/contact', element: s(<Contact />) },
       { path: '/livraison-retours', element: s(<Legal page="livraison" />) },
       { path: '/mentions-legales', element: s(<Legal page="mentions" />) },

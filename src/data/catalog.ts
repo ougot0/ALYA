@@ -38,3 +38,9 @@ export const availabilityLabel: Record<Availability, string> = {
 
 const fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: settings.currency });
 export const formatPrice = (cents: number | null) => (cents === null ? 'Prix à venir' : fmt.format(cents / 100));
+
+/** Visuels correspondant réellement à la variante choisie (tous si aucune n'est associée). */
+export const imagesFor = (p: Product, color: string | null) => {
+  const own = p.images.filter((i) => i.color === color);
+  return own.length ? own : p.images.filter((i) => !i.color).length ? p.images.filter((i) => !i.color) : p.images;
+};

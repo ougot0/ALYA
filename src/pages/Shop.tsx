@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Link, NavLink, useParams, useSearchParams } from 'react-router-dom';
-import { ProductCard } from '../components/ProductCard';
+import { Showroom } from '../components/Showroom';
 import { Seo } from '../components/Seo';
-import { allProducts, availabilityLabel, getCategory, settings } from '../data/catalog';
+import { allProducts, availabilityLabel, formatPrice, getCategory, settings } from '../data/catalog';
 import type { Availability } from '../data/types';
 
 type Sort = 'nouveautes' | 'prix-asc' | 'prix-desc';
@@ -103,14 +103,30 @@ export default function Shop() {
         <p className="shop__count" aria-live="polite">{list.length} objet{list.length > 1 ? 's' : ''}</p>
       </div>
 
+      {list.length > 0 && <Showroom key={list.map((p) => p.slug).join()} products={list} id="showroom-boutique" heading={cat?.name ?? 'Tous les objets'} />}
+
       {list.length ? (
-        <div className="shop__grid">
-          {list.map((p, i) => <ProductCard key={p.slug} product={p} index={i} />)}
-        </div>
+        <ol className="index">
+          {list.map((p, i) => (
+            <li key={p.slug}>
+              <Link to={`/produit/${p.slug}`} className="index__row" viewTransition>
+                <span className="index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span className="index__thumb"><img src={p.images[0]?.src} alt="" loading="lazy" /></span>
+                <span className="index__name">{p.name}</span>
+                <span className="index__cat">{getCategory(p.category)?.name}</span>
+                <span className="index__colors" aria-label={`${p.colors.length} couleurs`}>
+                  {p.colors.map((c) => <i key={c.name} style={{ background: c.hex }} title={c.name} />)}
+                </span>
+                <span className="index__price">{formatPrice(p.price)}<small>{availabilityLabel[p.availability]}</small></span>
+              </Link>
+            </li>
+          ))}
+        </ol>
       ) : (
         <div className="shop__empty">
           <p>{base.length ? 'Aucun objet ne correspond à ces critères.' : 'Les premiers objets de cette catégorie arrivent bientôt.'}</p>
           {base.length > 0 && <button className="link-arrow" onClick={() => setParams({}, { replace: true })}>Effacer les filtres</button>}
+          {!base.length && <Link to="/personnalisation" className="link-arrow">Demander une création personnalisée</Link>}
         </div>
       )}
     </div>

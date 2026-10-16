@@ -27,11 +27,12 @@ export function Layout() {
         <p className="demo-banner">Aperçu de démonstration · visuels provisoires · prix fictifs pour essayer le panier · paiement désactivé</p>
       )}
       <header className="site-header">
-        <Link to="/" className="wordmark" aria-label={`${settings.brandName}, accueil`}>
-          {settings.brandName}
+        <Link to="/" className="wordmark" aria-label={`${settings.brandName} Impression 3D, accueil`}>
+          {settings.brandName}<span>Impression 3D</span>
         </Link>
         <nav className="nav-desktop" aria-label="Navigation principale">
-          <NavLink to="/boutique">Boutique</NavLink>
+          <NavLink to="/boutique">Showroom</NavLink>
+          <NavLink to="/personnalisation">Personnalisation</NavLink>
           <NavLink to="/fabrication">Fabrication</NavLink>
           <NavLink to="/contact">Contact</NavLink>
         </nav>
@@ -52,10 +53,11 @@ export function Layout() {
       <div id="menu-mobile" className={`menu-mobile ${open ? 'is-open' : ''}`} hidden={!open}>
         <nav aria-label="Navigation mobile">
           <ol className="menu-mobile__main">
-            <li><Link to="/boutique"><span>01</span>Boutique</Link></li>
-            <li><Link to="/fabrication"><span>02</span>Fabrication</Link></li>
-            <li><Link to="/contact"><span>03</span>Contact</Link></li>
-            <li><Link to="/panier"><span>04</span>Panier ({count})</Link></li>
+            <li><Link to="/boutique"><span>01</span>Showroom</Link></li>
+            <li><Link to="/personnalisation"><span>02</span>Personnalisation</Link></li>
+            <li><Link to="/fabrication"><span>03</span>Fabrication</Link></li>
+            <li><Link to="/contact"><span>04</span>Contact</Link></li>
+            <li><Link to="/panier"><span>05</span>Panier ({count})</Link></li>
           </ol>
           <p className="eyebrow">Catégories</p>
           <ul className="menu-mobile__cats">
@@ -97,6 +99,7 @@ function Footer() {
       <nav aria-label="Maison" className="site-footer__col">
         <p className="eyebrow">Maison</p>
         <ul>
+          <li><Link to="/personnalisation">Créations personnalisées</Link></li>
           <li><Link to="/fabrication">Fabrication</Link></li>
           <li><Link to="/contact">Contact</Link></li>
           <li><Link to="/livraison-retours">Livraison et retours</Link></li>

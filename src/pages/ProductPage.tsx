@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { DepthProduct } from '../components/DepthProduct';
 import { ProductCard } from '../components/ProductCard';
 import { Seo } from '../components/Seo';
-import { availabilityLabel, formatPrice, getCategory, getProduct, isPurchasable, settings } from '../data/catalog';
+import { availabilityLabel, formatPrice, getCategory, getProduct, imagesFor, isPurchasable, settings } from '../data/catalog';
 import { useCart } from '../lib/cart';
 import NotFound from './NotFound';
 
@@ -24,7 +24,9 @@ export default function ProductPage() {
   }, [slug, p]);
 
   if (!p) return <NotFound />;
-  const img = p.images[view] ?? p.images[0];
+  const views = imagesFor(p, color);
+  const img = views[view] ?? views[0];
+  const glow = p.light && color ? p.light[color] : undefined;
   const cat = getCategory(p.category);
   const buyable = isPurchasable(p);
   const needsColor = p.colors.length > 0;
@@ -66,6 +68,8 @@ export default function ProductPage() {
 
       <div className="product__visual">
         <div className="product__stage" style={{ viewTransitionName: `p-${p.slug}` }}>
+          {glow && <span className="showroom__lamp" style={{ ['--lamp' as string]: glow }} aria-hidden="true" />}
+          <span className="showroom__floor" aria-hidden="true" />
           {img ? (
             <DepthProduct
               key={img.src}
@@ -77,6 +81,7 @@ export default function ProductPage() {
               parallax={(p.depth?.parallax ?? 1) * 1.2}
               scale={p.depth?.scale}
               animation={{ follow: 'drag', float: 0.6 }}
+              light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.45, spec: 0.16 }}
               bleed={8}
               eager
             />
@@ -90,9 +95,9 @@ export default function ProductPage() {
           )}
           {img?.depth && <p className="product__hint">Faites glisser pour changer de point de vue</p>}
         </div>
-        {p.images.length > 1 && (
+        {views.length > 1 && (
           <ul className="product__thumbs" aria-label="Autres vues">
-            {p.images.map((im, i) => (
+            {views.map((im, i) => (
               <li key={im.src}>
                 <button aria-pressed={i === view} onClick={() => setView(i)} aria-label={`Vue ${i + 1} : ${im.alt}`}>
                   <img src={im.src} alt="" loading="lazy" />
@@ -124,7 +129,7 @@ export default function ProductPage() {
                   value={c.name}
                   checked={color === c.name}
                   disabled={!c.available}
-                  onChange={() => setColor(c.name)}
+                  onChange={() => { setColor(c.name); setView(0); }}
                 />
                 <span style={{ background: c.hex }} />
                 <span className="sr-only">{c.name}</span>

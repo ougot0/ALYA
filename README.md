@@ -1,4 +1,4 @@
-# ALYA — boutique d’objets imprimés en 3D
+# ALYA Impression 3D
 
 Site e‑commerce complet : React 19 + TypeScript + Vite, Three.js (rendu 2.5D « AutoDepth »), GSAP/ScrollTrigger,
 paiement Stripe Checkout via Netlify Functions, administration Decap CMS protégée par Netlify Identity.
@@ -75,12 +75,33 @@ Performance et repli : three.js est chargé à la demande, scène créée à l�
 maillage allégé et parallaxe réduite sur tactile, `prefers-reduced-motion` respecté (image fixe), la photo reste affichée si
 WebGL ou la carte de profondeur manquent. Sur le catalogue, un seul contexte WebGL est monté au survol.
 
-## Direction artistique
+## Direction artistique : l’atelier orbital
 
-Ivoire, pierre et anthracite, une seule couleur d’accent (terre cuite, teinte de filament). Instrument Serif pour les titres,
-Hanken Grotesk pour le texte, IBM Plex Mono pour les repères techniques. Angles vifs, filets fins, compositions asymétriques.
-Trois animations signatures : la lampe qui avance et passe entre les lignes du titre (accueil), le support qui se tourne vers chaque
-usage (mise en scène), l’objet construit couche par couche au défilement (fabrication).
+Bleu marine presque noir et surfaces bleu sombre en profondeur. Le violet n’est jamais une couleur d’interface :
+c’est une lumière d’ambiance posée sur le bord des sections, comme une installation hors champ. Les couleurs vives
+sont réservées aux produits. Typographie : Archivo en chasse étendue (titres), Hanken Grotesk (texte), IBM Plex Mono (repères).
+
+Parcours de la page d’accueil :
+1. **Introduction** (`src/components/PrinterIntro.tsx`) : une imprimante 3D (canvas 2D) imprime le logo couche par couche.
+   Le logo est découpé en couches puis en segments d’extrusion ; la buse suit ce trajet en serpentin et la matière n’est
+   déposée que sous sa position, à partir de la même variable de temps : buse et impression sont synchronisées par construction.
+   Durée ~4 s, bouton « Passer l’introduction », rien ne bloque le défilement. Au défilement, la caméra avance dans l’atelier.
+2. **Zones** : deux catégories principales (Lampes, Supports) mises en scène, l’objet avance au défilement et dépasse de sa niche ;
+   les autres familles sont des liens secondaires.
+3. **Showroom** (`src/components/Showroom.tsx`) : un objet à la fois. Flèches (et ← → au clavier) : l’objet recule et sort du champ,
+   le suivant avance depuis le côté opposé. Glisser oriente l’objet (angles volontairement limités). Variantes de couleur avec
+   visuels propres à chaque variante, lumière interne de la lampe à la couleur de la variante, caractéristiques dépliables,
+   quantité et ajout au panier.
+4. **Personnalisation** (`src/components/Customization.tsx`, aussi sur `/personnalisation`) : Classique, Lampe, NFC, Aimanté ;
+   une description, un e-mail, une image de référence facultative. Envoi via Netlify Forms.
+
+Note : le code de la version précédente du site n’était pas disponible ; cette version reconstruit son concept à partir de sa description.
+
+## Visuels provisoires
+
+`npm run assets:placeholders` génère des illustrations (lampe en 3 couleurs, support en 3 couleurs) et une carte de profondeur
+par forme. Ce sont des placeholders techniques. Pour une vraie photo : `npm run assets:depth -- photo.jpg lampe-onde-ambre`,
+puis référencer le fichier dans `images` du produit avec `"color": "Ambre"`.
 
 ## Arborescence
 

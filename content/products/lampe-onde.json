@@ -3,21 +3,64 @@
   "name": "Lampe Onde",
   "category": "lampes",
   "shortDescription": "Lampe à poser dont l’abat-jour est imprimé couche par couche.",
-  "description": "L’abat-jour de la lampe Onde est construit par l’empilement de fines couches de filament. Ces lignes, visibles de près, accrochent la lumière et donnent à la surface une texture régulière. Allumée, la lampe diffuse une lumière chaude à travers la matière.\n\nVisuels provisoires : les photographies définitives remplaceront ces illustrations.",
+  "description": "L’abat-jour de la lampe Onde est construit par l’empilement de fines couches de filament. Ces lignes, visibles de près, accrochent la lumière et donnent à la surface une texture régulière. Allumée, la lampe diffuse une lumière chaude à travers la matière.\n\nVisuels provisoires : ces illustrations seront remplacées par les photographies définitives de chaque couleur.",
   "price": null,
   "createdAt": "2026-10-01",
   "availability": "coming_soon",
   "stock": null,
   "hidden": false,
   "featured": true,
-  "colors": [],
+  "colors": [
+    {
+      "name": "Ambre",
+      "hex": "#e9a25a",
+      "available": true
+    },
+    {
+      "name": "Corail",
+      "hex": "#e5664f",
+      "available": true
+    },
+    {
+      "name": "Glacier",
+      "hex": "#8fcbe0",
+      "available": true
+    }
+  ],
   "dimensions": "",
   "materials": "",
   "usages": [],
   "images": [
-    { "src": "/products/lampe-onde-1.webp", "depth": "/products/lampe-onde-1-depth.webp", "alt": "Lampe Onde éteinte, abat-jour strié couleur sable sur pied anthracite" },
-    { "src": "/products/lampe-onde-2.webp", "depth": "/products/lampe-onde-2-depth.webp", "alt": "Lampe Onde allumée, lumière chaude sous l’abat-jour" }
+    {
+      "src": "/products/lampe-onde-ambre.webp",
+      "depth": "/products/lampe-onde-depth.webp",
+      "alt": "Lampe Onde allumée, abat-jour strié couleur ambre",
+      "color": "Ambre"
+    },
+    {
+      "src": "/products/lampe-onde-corail.webp",
+      "depth": "/products/lampe-onde-depth.webp",
+      "alt": "Lampe Onde allumée, abat-jour strié couleur corail",
+      "color": "Corail"
+    },
+    {
+      "src": "/products/lampe-onde-glacier.webp",
+      "depth": "/products/lampe-onde-depth.webp",
+      "alt": "Lampe Onde allumée, abat-jour strié couleur glacier",
+      "color": "Glacier"
+    }
   ],
-  "depth": { "intensity": 0.32, "parallax": 1, "scale": 1 },
-  "related": ["support-trame"]
+  "depth": {
+    "intensity": 0.32,
+    "parallax": 1,
+    "scale": 1
+  },
+  "related": [
+    "support-trame"
+  ],
+  "light": {
+    "Ambre": "#ffc27a",
+    "Corail": "#ff8a6b",
+    "Glacier": "#bfe8ff"
+  }
 }

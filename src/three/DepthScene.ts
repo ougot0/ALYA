@@ -50,6 +50,9 @@ const fragment = /* glsl */ `
   uniform float uLight;
   uniform float uAmbient;
   uniform float uOpacity;
+  uniform vec3 uRimColor;
+  uniform float uRim;
+  uniform float uSpec;
   varying vec2 vUv;
   varying float vDepth;
   void main() {
@@ -63,7 +66,13 @@ const fragment = /* glsl */ `
     vec3 n = normalize(vec3(-dx * 6.0, -dy * 6.0, 1.0));
     float diff = max(dot(n, normalize(uLightDir)), 0.0);
     float shade = mix(1.0, uAmbient + diff * (1.0 - uAmbient) * 1.15, uLight);
-    gl_FragColor = vec4(c.rgb * shade, a * uOpacity);
+    vec3 L = normalize(uLightDir);
+    // reflet discret (Blinn-Phong, observateur face à l'écran)
+    float spec = pow(max(dot(n, normalize(L + vec3(0.0, 0.0, 1.0))), 0.0), 48.0) * uSpec;
+    // lumière d'ambiance hors champ : n'éclaire que les pentes tournées vers elle
+    float rim = max(dot(normalize(n.xy + 1e-4), normalize(vec2(0.9, 0.5))), 0.0) * (1.0 - n.z) * uRim * 3.0;
+    vec3 col = c.rgb * shade + vec3(spec) + uRimColor * rim;
+    gl_FragColor = vec4(col, a * uOpacity);
     #include <colorspace_fragment>
   }
 `;
@@ -74,7 +83,7 @@ export interface DepthSceneOptions {
   mask?: string;
   intensity: number;
   segments: number;
-  light: { direction: [number, number, number]; strength: number; ambient: number };
+  light: { direction: [number, number, number]; strength: number; ambient: number; rim?: [number, number, number]; rimStrength?: number; spec?: number };
 }
 
 export interface DepthMotion {
@@ -141,6 +150,9 @@ export class DepthScene {
         uLight: { value: this.opts.light.strength },
         uAmbient: { value: this.opts.light.ambient },
         uOpacity: { value: 1 },
+        uRimColor: { value: new Vector3(...(this.opts.light.rim ?? [0.48, 0.36, 1])) },
+        uRim: { value: this.opts.light.rimStrength ?? 0.35 },
+        uSpec: { value: this.opts.light.spec ?? 0.12 },
       },
     });
     this.mesh = new Mesh(geo, mat);

@@ -1,302 +1,148 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Customization } from '../components/Customization';
 import { DepthProduct } from '../components/DepthProduct';
-import { ProductCard } from '../components/ProductCard';
+import { PrinterIntro } from '../components/PrinterIntro';
 import { Seo } from '../components/Seo';
-import { allProducts, getProduct, productsIn, settings } from '../data/catalog';
+import { Showroom } from '../components/Showroom';
+import { allProducts, getCategory, imagesFor, productsIn, settings } from '../data/catalog';
 import type { DepthMotion } from '../three/DepthScene';
-import { gsap, ScrollTrigger } from '../lib/gsap';
+import { gsap } from '../lib/gsap';
 import { useReducedMotion } from '../lib/motion';
 
+/** Les deux catégories mises en avant ; les autres deviennent des liens secondaires. */
+const MAIN = ['lampes', 'supports'];
+
 export default function Home() {
-  const hero = allProducts.find((p) => p.featured && p.category === 'lampes') ?? allProducts[0];
-  const staged = getProduct('support-trame') ?? allProducts.find((p) => p.usages.length > 0);
   return (
     <>
-      <Seo description={`${settings.brandName} — lampes, supports et objets imprimés en 3D, dessinés comme des objets de design.`} />
-      {hero && <Hero slug={hero.slug} />}
-      <Creations />
-      {staged && staged.usages.length > 0 && <Usages slug={staged.slug} />}
-      <Process />
-      <CollectionIndex />
-      <section className="closing">
-        <p className="eyebrow">Fin de la visite</p>
-        <Link to="/boutique" className="closing__link">
-          Voir toute la boutique <span aria-hidden="true" className="closing__rule" />
-        </Link>
-      </section>
+      <Seo description={`${settings.brandName} Impression 3D — lampes, supports et créations personnalisées imprimées en 3D.`} />
+      <Intro />
+      <Zones />
+      <Showroom products={allProducts} heading="Showroom" />
+      <Customization />
     </>
   );
 }
 
-/* ------------------------------------------------------------------ Hero */
+/* ------------------------------------------------------------- Intro */
 
-function Hero({ slug }: { slug: string }) {
-  const p = getProduct(slug)!;
-  const img = p.images[0];
+function Intro() {
   const root = useRef<HTMLElement>(null);
-  const motion = useRef<DepthMotion>({ x: 0, y: 0, push: -0.35 });
+  const [printed, setPrinted] = useState(false);
+  const [skip, setSkip] = useState(false);
   const reduced = useReducedMotion();
 
+  // en quittant l'introduction, la caméra avance dans l'atelier
   useLayoutEffect(() => {
-    const el = root.current!;
-    const m = motion.current;
-    if (reduced) { m.push = 0; return; }
+    if (reduced) return;
     const ctx = gsap.context(() => {
-      // introduction : courte, n'empêche ni le défilement ni les clics
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tl.from('.hero__arch', { clipPath: 'inset(100% 0 0 0)', duration: 1.1 })
-        .from('.hero__line > span', { yPercent: 110, duration: 0.9, stagger: 0.08 }, 0.15)
-        .to(m, { push: 0, duration: 1.6, ease: 'power2.out' }, 0.2)
-        .from('.hero__aside > *', { opacity: 0, y: 12, duration: 0.6, stagger: 0.06 }, 0.6);
-
-      // pointeur : léger parallaxe, sauf pendant l'avancée
-      const onMove = (e: PointerEvent) => {
-        m.x = (e.clientX / innerWidth) * 2 - 1;
-        m.y = (e.clientY / innerHeight) * 2 - 1;
-      };
-      window.addEventListener('pointermove', onMove, { passive: true });
-
-      const mm = gsap.matchMedia();
-      mm.add('(min-width: 900px)', () => {
-        const st = gsap.timeline({
-          scrollTrigger: { trigger: el, start: 'top top', end: '+=90%', pin: true, scrub: 0.6 },
-        });
-        st.to(m, { push: 1, ease: 'none' }, 0)
-          .to('.hero__line', { yPercent: -22, ease: 'none' }, 0)
-          .to('.hero__aside', { opacity: 0, ease: 'none', duration: 0.5 }, 0)
-          .to('.hero__arch', { scale: 0.94, ease: 'none' }, 0)
-          .to('.hero__shadow', { scaleX: 1.35, opacity: 0.32, ease: 'none' }, 0);
-      });
-      mm.add('(max-width: 899px)', () => {
-        gsap.timeline({ scrollTrigger: { trigger: el, start: 'top top', end: 'bottom 30%', scrub: 0.5 } })
-          .to(m, { push: 0.8, ease: 'none' }, 0)
-          .to('.hero__shadow', { scaleX: 1.25, opacity: 0.3, ease: 'none' }, 0);
-      });
-      return () => window.removeEventListener('pointermove', onMove);
-    }, el);
+      gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: 0.5 } })
+        .to('.intro__scene', { scale: 1.45, yPercent: -8, autoAlpha: 0, ease: 'power1.in' }, 0)
+        .to('.intro__brand', { yPercent: -40, autoAlpha: 0, ease: 'none' }, 0);
+    }, root);
     return () => ctx.revert();
   }, [reduced]);
 
   return (
-    <section className="hero" ref={root} aria-labelledby="hero-title">
-      <h1 className="hero__title" id="hero-title">
-        <span className="hero__line"><span>La lumière,</span></span>
-        <span className="hero__line hero__line--behind"><span>couche</span></span>
-        <span className="hero__line hero__line--front"><span><em>par couche.</em></span></span>
-      </h1>
-      <div className="hero__stage">
-        <div className="hero__arch" aria-hidden="true" />
-        <div className="hero__shadow" aria-hidden="true" />
-        <DepthProduct
-          className="hero__product"
-          image={img.src}
-          depthMap={img.depth}
-          alt={img.alt}
-          depthIntensity={(p.depth?.intensity ?? 0.3) * 0.75}
-          motion={motion}
-          bleed={40}
-          eager
-          animation={{ float: 1, drift: -0.42 }}
-          light={{ direction: [-0.7, 0.5, 1], strength: 0.65 }}
-        />
+    <section className={`intro ${printed ? 'is-printed' : ''}`} ref={root} aria-labelledby="intro-title">
+      <div className="intro__scene">
+        <PrinterIntro text={settings.brandName} skip={skip} onDone={() => setPrinted(true)} />
       </div>
-      <div className="hero__aside">
-        <p className="eyebrow">N°01 — {p.name}</p>
-        <p className="hero__desc">{p.shortDescription}</p>
-        <Link to={`/produit/${p.slug}`} className="btn" viewTransition>
-          Découvrir la lampe
-        </Link>
+      {!printed && (
+        <button className="intro__skip" onClick={() => setSkip(true)}>Passer l’introduction</button>
+      )}
+      <div className="intro__brand">
+        <h1 id="intro-title" className="intro__title">
+          {settings.brandName} <span>Impression 3D</span>
+        </h1>
+        <p className="intro__lead">Lampes, supports et objets du quotidien, imprimés couche par couche dans notre atelier.</p>
+        <div className="intro__cta">
+          <a href="#showroom" className="btn btn--solid">Entrer dans le showroom</a>
+          <a href="#personnalisation" className="link-arrow">Créations personnalisées</a>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ------------------------------------------------------------- Créations */
+/* ------------------------------------------------------------- Zones */
 
-function Creations() {
-  const items = allProducts.slice(0, 5);
+function Zones() {
+  const secondary = settings.categories.filter((c) => !MAIN.includes(c.slug));
   return (
-    <section className="creations" aria-labelledby="creations-title">
-      <header className="section-head">
-        <p className="eyebrow">01 — Les créations</p>
-        <h2 id="creations-title">Des objets à poser, à utiliser, à regarder.</h2>
-      </header>
-      <div className="creations__spread">
-        {items.map((p, i) => (
-          <ProductCard key={p.slug} product={p} index={i} variant={i === 0 ? 'large' : 'offset'} />
-        ))}
-      </div>
+    <section className="zones" aria-labelledby="zones-title">
+      <h2 id="zones-title" className="sr-only">Les créations</h2>
+      {MAIN.map((slug, i) => <Zone key={slug} slug={slug} side={i % 2 ? 'right' : 'left'} index={i} />)}
+      <nav className="zones__more" aria-label="Autres créations">
+        <p className="eyebrow">Également à l’atelier</p>
+        <ul>
+          {secondary.map((c) => {
+            const n = productsIn(c.slug).length;
+            return (
+              <li key={c.slug}>
+                <Link to={`/boutique/${c.slug}`}>
+                  {c.name} <span>{n ? `${n} objet${n > 1 ? 's' : ''}` : 'Bientôt'}</span>
+                </Link>
+              </li>
+            );
+          })}
+          <li><a href="#personnalisation">Créations personnalisées <span>Sur demande</span></a></li>
+        </ul>
+      </nav>
     </section>
   );
 }
 
-/* ------------------------------------------------------- Mise en scène */
-
-function Usages({ slug }: { slug: string }) {
-  const p = getProduct(slug)!;
-  const img = p.images[0];
-  const [active, setActive] = useState(0);
-  const motion = useRef<DepthMotion>({ x: 0, y: 0, push: 0 });
+function Zone({ slug, side, index }: { slug: string; side: 'left' | 'right'; index: number }) {
+  const cat = getCategory(slug);
+  const p = productsIn(slug).find((x) => x.featured) ?? productsIn(slug)[0];
   const root = useRef<HTMLElement>(null);
+  const motion = useRef<DepthMotion>({ x: 0, y: 0, push: -0.4 });
+  const reduced = useReducedMotion();
 
+  // au défilement, l'objet avance vers le visiteur et dépasse de sa zone
   useLayoutEffect(() => {
+    const m = motion.current;
+    if (reduced) { m.push = 0.2; return; }
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>('.usages__step').forEach((step, i) => {
-        ScrollTrigger.create({
-          trigger: step,
-          start: 'top 60%',
-          end: 'bottom 60%',
-          onToggle: (s) => s.isActive && setActive(i),
-        });
-      });
+      gsap.timeline({ scrollTrigger: { trigger: root.current, start: 'top 85%', end: 'bottom 20%', scrub: 0.6 } })
+        .fromTo(m, { push: -0.5, x: side === 'left' ? 0.5 : -0.5 }, { push: 0.75, x: side === 'left' ? -0.4 : 0.4, ease: 'none' }, 0)
+        .fromTo('.zone__name', { xPercent: side === 'left' ? -6 : 6 }, { xPercent: side === 'left' ? 4 : -4, ease: 'none' }, 0)
+        .fromTo('.zone__frame', { scale: 0.94 }, { scale: 1.02, ease: 'none' }, 0);
     }, root);
     return () => ctx.revert();
-  }, []);
+  }, [reduced, side]);
 
-  // l'objet se tourne légèrement vers la zone décrite
-  const u = p.usages[active];
-  motion.current.x = (u.x - 0.5) * 1.6;
-  motion.current.y = (u.y - 0.5) * 1.2;
-  motion.current.push = 0.25;
+  if (!cat) return null;
+  const img = p ? imagesFor(p, p.colors[0]?.name ?? null)[0] : undefined;
+  const glow = p?.light && p.colors[0] ? p.light[p.colors[0].name] : undefined;
 
   return (
-    <section className="usages" ref={root} aria-labelledby="usages-title">
-      <div className="usages__sticky">
-        <div className="usages__stage">
+    <article className={`zone zone--${side}`} ref={root}>
+      <p className="zone__name" aria-hidden="true">{cat.name}</p>
+      <div className="zone__frame" aria-hidden="true" />
+      <div className="zone__object">
+        {glow && <span className="showroom__lamp" style={{ ['--lamp' as string]: glow }} aria-hidden="true" />}
+        {img && (
           <DepthProduct
             image={img.src}
             depthMap={img.depth}
             alt={img.alt}
-            depthIntensity={p.depth?.intensity}
+            depthIntensity={p?.depth?.intensity}
             motion={motion}
-            bleed={10}
+            bleed={24}
+            animation={{ float: 0.8, drift: side === 'left' ? 0.12 : -0.12 }}
+            light={{ direction: [-0.6, 0.7, 1], strength: 0.6, ambient: 0.66, rimStrength: 0.45, spec: 0.14 }}
           />
-          <div className="usages__pins">
-          {p.usages.map((us, i) => (
-            <span
-              key={us.title}
-              className={`usages__pin ${i === active ? 'is-active' : ''}`}
-              style={{ left: `${us.x * 100}%`, top: `${us.y * 100}%` }}
-              aria-hidden="true"
-            >
-              {String(i + 1).padStart(2, '0')}
-            </span>
-          ))}
-          </div>
-        </div>
+        )}
       </div>
-      <div className="usages__text">
-        <header className="section-head">
-          <p className="eyebrow">02 — {p.name}</p>
-          <h2 id="usages-title">Un seul support, quatre usages.</h2>
-          <p>{p.shortDescription}</p>
-        </header>
-        <ol className="usages__list">
-          {p.usages.map((us, i) => (
-            <li key={us.title} className={`usages__step ${i === active ? 'is-active' : ''}`}>
-              <span className="usages__num">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{us.title}</h3>
-              <p>{us.text}</p>
-            </li>
-          ))}
-        </ol>
-        <Link to={`/produit/${p.slug}`} className="link-arrow" viewTransition>
-          Voir le support {p.name.replace(/^Support\s+/, '')}
-        </Link>
+      <div className="zone__text">
+        <p className="eyebrow">{String(index + 1).padStart(2, '0')} — {cat.name}</p>
+        <h3 className="zone__title">{cat.name}</h3>
+        <p>{cat.description}</p>
+        <Link to={`/boutique/${cat.slug}`} className="link-arrow">Explorer les {cat.name.toLowerCase()}</Link>
       </div>
-    </section>
-  );
-}
-
-/* --------------------------------------------------------- Fabrication */
-
-const STEPS = [
-  { t: 'Dessin', d: 'Chaque objet est d’abord modélisé en 3D : proportions, épaisseurs, points d’appui.' },
-  { t: 'Préparation', d: 'Le modèle est découpé en fines couches horizontales qui deviennent les trajectoires de l’imprimante.' },
-  { t: 'Impression', d: 'La buse dépose le filament fondu, couche après couche, jusqu’à construire la forme complète.' },
-  { t: 'Finition', d: 'La pièce est détachée du plateau, nettoyée et vérifiée avant expédition.' },
-];
-
-export function Process({ standalone = false }: { standalone?: boolean }) {
-  const root = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
-  const LAYERS = 46;
-
-  useLayoutEffect(() => {
-    if (reduced) return;
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: '.process__figure', start: 'top 75%', end: 'bottom 35%', scrub: 0.4 },
-      });
-      tl.fromTo('.process__layers', { clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)', ease: 'none' }, 0)
-        .fromTo('.process__nozzle', { yPercent: 0 }, { y: () => -(root.current!.querySelector('.process__figure') as HTMLElement).clientHeight * 0.86, ease: 'none' }, 0);
-    }, root);
-    return () => ctx.revert();
-  }, [reduced]);
-
-  // profil d'abat-jour + pied, en couches
-  const rows = Array.from({ length: LAYERS }, (_, i) => {
-    const t = i / (LAYERS - 1); // 0 en bas
-    let w: number;
-    if (t < 0.06) w = 0.42;
-    else if (t < 0.5) w = 0.035;
-    else w = 0.86 - ((t - 0.5) / 0.5) * 0.5;
-    return { y: 96 - t * 88, w };
-  });
-
-  return (
-    <section className={`process ${standalone ? 'process--page' : ''}`} ref={root} aria-labelledby="process-title">
-      <header className="section-head">
-        <p className="eyebrow">{standalone ? 'Fabrication' : '03 — Fabrication'}</p>
-        <h2 id="process-title">Comment un objet est imprimé.</h2>
-      </header>
-      <figure className="process__figure" aria-hidden="true">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" className="process__layers">
-          {rows.map((r, i) => (
-            <line key={i} x1={50 - r.w * 50} x2={50 + r.w * 50} y1={r.y} y2={r.y} />
-          ))}
-        </svg>
-        <span className="process__nozzle" />
-        <span className="process__bed" />
-      </figure>
-      <ol className="process__steps">
-        {STEPS.map((s, i) => (
-          <li key={s.t}>
-            <span className="process__num">{String(i + 1).padStart(2, '0')}</span>
-            <h3>{s.t}</h3>
-            <p>{s.d}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
-/* ---------------------------------------------------------- Collection */
-
-function CollectionIndex() {
-  return (
-    <section className="collection" aria-labelledby="collection-title">
-      <header className="section-head">
-        <p className="eyebrow">04 — La collection</p>
-        <h2 id="collection-title">Par catégorie</h2>
-      </header>
-      <ul className="collection__list">
-        {settings.categories.map((c, i) => {
-          const n = productsIn(c.slug).length;
-          return (
-            <li key={c.slug}>
-              <Link to={`/boutique/${c.slug}`} className="collection__row">
-                <span className="collection__num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="collection__name">{c.name}</span>
-                <span className="collection__desc">{c.description}</span>
-                <span className="collection__count">{n ? `${n} objet${n > 1 ? 's' : ''}` : 'À venir'}</span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
+    </article>
   );
 }

@@ -5,6 +5,8 @@ export interface ProductImage {
   depth?: string;
   mask?: string;
   alt: string;
+  /** Variante de couleur représentée par ce visuel */
+  color?: string;
 }
 
 export interface ProductColor {
@@ -47,6 +49,8 @@ export interface Product {
   images: ProductImage[];
   depth?: DepthSettings;
   model3d?: string;
+  /** Lumière interne visible (lampes) : couleur de la lumière par variante */
+  light?: Record<string, string>;
   related: string[];
 }
 

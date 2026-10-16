@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Seo } from '../components/Seo';
 import { settings } from '../data/catalog';
-import { Process } from './Home';
+import { Process } from '../components/Process';
 
 export default function About() {
   return (
