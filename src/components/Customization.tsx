@@ -1,4 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap, ScrollTrigger } from '../lib/gsap';
 import { DEMO } from '../data/catalog';
 
 export const CUSTOM_TYPES = [
@@ -33,6 +35,24 @@ export function Customization({ standalone = false }: { standalone?: boolean }) 
   const [type, setType] = useState<(typeof CUSTOM_TYPES)[number]['key']>('classique');
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const current = CUSTOM_TYPES.find((t) => t.key === type)!;
+  const root = useRef<HTMLElement>(null);
+
+  // les 4 types arrivent en cascade quand la liste entre à l'écran
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.set('.custom__type', { autoAlpha: 0, x: 40 });
+        ScrollTrigger.batch('.custom__type', {
+          start: 'top 88%',
+          once: true,
+          onEnter: (els) => gsap.to(els, { autoAlpha: 1, x: 0, stagger: 0.09, duration: 0.7, ease: 'power3.out' }),
+        });
+        gsap.from('.custom__panel', { autoAlpha: 0, y: 30, duration: 0.8, ease: 'power2.out', scrollTrigger: { trigger: '.custom__panel', start: 'top 90%', once: true } });
+      });
+    },
+    { scope: root },
+  );
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,9 +70,9 @@ export function Customization({ standalone = false }: { standalone?: boolean }) 
   const Title = standalone ? 'h1' : 'h2';
 
   return (
-    <section className="custom" id="personnalisation" aria-labelledby="custom-title">
+    <section className="custom" id="personnalisation" aria-labelledby="custom-title" ref={root}>
       <div className="custom__intro">
-        <Title id="custom-title" className="custom__title">Créations personnalisées</Title>
+        <Title id="custom-title" className="custom__title" data-reveal>Créations personnalisées</Title>
         <p>Choisissez un type, décrivez ce que vous voulez. Nous répondons par e-mail avec une proposition et un prix.</p>
       </div>
 

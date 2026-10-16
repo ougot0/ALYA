@@ -81,19 +81,19 @@ Bleu marine presque noir et surfaces bleu sombre en profondeur. Le violet n’ex
 (contre-jour dans les rendus et le shader), jamais comme décor d’interface. Les couleurs vives sont réservées aux produits.
 Typographie : Archivo (titres, casse normale), Hanken Grotesk (texte). Pas de libellés en capitales, pas de numérotation décorative.
 
-Parcours de la page d’accueil :
-1. **Introduction** (`src/components/PrinterIntro.tsx`) : une imprimante 3D (canvas 2D) imprime le logo couche par couche.
-   Le logo est découpé en couches puis en segments d’extrusion ; la buse suit ce trajet en serpentin et la matière n’est
-   déposée que sous sa position, à partir de la même variable de temps : buse et impression sont synchronisées par construction.
-   Durée ~4 s, bouton « Passer l’introduction », rien ne bloque le défilement. Au défilement, la caméra avance dans l’atelier.
-2. **Zones** : deux catégories principales (Lampes, Supports) mises en scène, l’objet avance au défilement et dépasse de sa niche ;
-   les autres familles sont des liens secondaires.
-3. **Showroom** (`src/components/Showroom.tsx`) : un objet à la fois. Flèches (et ← → au clavier) : l’objet recule et sort du champ,
-   le suivant avance depuis le côté opposé. Glisser oriente l’objet (angles volontairement limités). Variantes de couleur avec
-   visuels propres à chaque variante, lumière interne de la lampe à la couleur de la variante, caractéristiques dépliables,
-   quantité et ajout au panier.
-4. **Personnalisation** (`src/components/Customization.tsx`, aussi sur `/personnalisation`) : Classique, Lampe, NFC, Aimanté ;
-   une description, un e-mail, une image de référence facultative. Envoi via Netlify Forms.
+Parcours de la page d’accueil, piloté par GSAP ScrollTrigger (`src/pages/Home.tsx`, `@gsap/react` pour le nettoyage) :
+1. **Introduction** (`PrinterIntro.tsx`) : l’imprimante imprime le logo seule (~4 s, buse et matière synchronisées par construction).
+   Section épinglée : au défilement, la caméra avance vers le logo et l’imprimante sort du cadre.
+2. **Atelier** : piste horizontale épinglée (Lampes, Supports, « Et aussi »), aimantation sur chaque panneau.
+   Avec `containerAnimation`, chaque objet avance vers le visiteur en passant au centre puis s’éloigne ; le texte glisse
+   moins vite que l’objet (deux plans). Sur mobile, panneaux empilés.
+3. **Showroom** (`Showroom.tsx`) : entrée en profondeur au défilement, puis flèches / ← → / glisser, variantes, panier.
+4. **Fabrication** (`Process.tsx`) : section épinglée, une timeline à 4 repères (Dessin, Préparation, Impression, Finition)
+   avec aimantation `labelsDirectional` ; pendant l’impression, la buse et le remplissage suivent la même progression.
+5. **Personnalisation** (`Customization.tsx`) : les 4 types arrivent en cascade (`ScrollTrigger.batch`).
+
+Tout passe par `gsap.matchMedia` : variantes desktop / mobile, et aucune animation au défilement si le système demande
+de réduire les animations.
 
 Note : le code de la version précédente du site n’était pas disponible ; cette version reconstruit son concept à partir de sa description.
 

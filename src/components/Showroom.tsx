@@ -110,7 +110,7 @@ export function Showroom({ products, id = 'showroom', heading = 'Showroom' }: Pr
   return (
     <section className="showroom" id={id} aria-roledescription="carrousel" aria-label={heading} onKeyDown={onKey}>
       <div className="showroom__head">
-        <h2 className="showroom__heading">{heading}</h2>
+        <h2 className="showroom__heading" data-reveal>{heading}</h2>
         <p className="showroom__count" aria-live="polite">
           {index + 1} sur {products.length}
         </p>

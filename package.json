@@ -13,6 +13,7 @@
     "assets:render": "node scripts/render-products/render.mjs"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "gsap": "^3.15.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
